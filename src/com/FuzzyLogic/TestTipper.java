@@ -1,6 +1,8 @@
 package com.FuzzyLogic;
 
-import net.sourceforge.jFuzzyLogic.*;
+import net.sourceforge.jFuzzyLogic.FIS;
+import net.sourceforge.jFuzzyLogic.FunctionBlock;
+import net.sourceforge.jFuzzyLogic.Gpr;
 import net.sourceforge.jFuzzyLogic.plot.JFuzzyChart;
 import net.sourceforge.jFuzzyLogic.rule.Variable;
 
@@ -9,33 +11,34 @@ import net.sourceforge.jFuzzyLogic.rule.Variable;
  * @author pcingola@users.sourceforge.net
  */
 public class TestTipper {
-    public static void main(String[] args) throws Exception {
-        // Load from 'FCL' file
-        String fileName = "tipper.fcl";
-        FIS fis = FIS.load(fileName,true);
 
-        // Error while loading?
-        if( fis == null ) { 
-            System.err.println("Can't load file: '" + fileName + "'");
-            return;
-        }
-        FunctionBlock funcionBlock = fis.getFunctionBlock(null);
+	public static void main(String[] args) throws Exception {
+		// Load from 'FCL' file
+		String fileName = "fcl/tipper.fcl";
+		FIS fis = FIS.load(fileName, true);
+		if (fis == null) { // Error while loading?
+			System.err.println("Can't load file: '" + fileName + "'");
+			return;
+		}
 
-        // Show 
-        JFuzzyChart.get().chart(funcionBlock);
+		// Show ruleset
+		FunctionBlock functionBlock = fis.getFunctionBlock(null);
+		JFuzzyChart.get().chart(functionBlock);
 
-        // Set inputs
-        fis.setVariable("service", 3);
-        fis.setVariable("food", 7);
+		// Set inputs
+		functionBlock.setVariable("service", 3);
+		functionBlock.setVariable("food", 7);
 
-        // Evaluate
-        fis.evaluate();
+		// Evaluate 
+		functionBlock.evaluate();
 
-        // Show output variable's chart
-        Variable tip = funcionBlock.getVariable("tip");
-        JFuzzyChart.get().chart(tip, tip.getDefuzzifier(), true);
+		// Show output variable's chart
+		Variable tip = functionBlock.getVariable("tip");
+		JFuzzyChart.get().chart(tip, tip.getDefuzzifier(), true);
+		Gpr.debug("poor[service]: " + functionBlock.getVariable("service").getMembership("poor"));
 
-        // Print ruleSet
-        System.out.println(fis);
-    }
+		// Print ruleSet
+		System.out.println(functionBlock);
+		System.out.println("TIP:" + functionBlock.getVariable("tip").getValue());
+	}
 }
